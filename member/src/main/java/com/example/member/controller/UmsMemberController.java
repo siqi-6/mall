@@ -1,5 +1,6 @@
 package com.example.member.controller;
 
+import com.example.member.service.pub.FeignService;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -31,6 +32,21 @@ public class UmsMemberController {
     @Autowired
     private UmsMemberService umsMemberService;
 
+    @Autowired
+    FeignService feignService;
+
+    @RequestMapping("/getCoupon")
+    public R getCoupon(){
+        return R.ok().put("coupon",  feignService.getCoupons());
+    }
+
+
+
+
+
+
+
+
     /**
      * 列表
      */
@@ -38,7 +54,6 @@ public class UmsMemberController {
     //@RequiresPermissions("member:umsmember:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = umsMemberService.queryPage(params);
-
         return R.ok().put("page", page);
     }
 
