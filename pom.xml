@@ -24,6 +24,7 @@
         <module>renren-fast</module>
         <module>renren-generator</module>
         <module>common</module>
+        <module>gateway</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>
