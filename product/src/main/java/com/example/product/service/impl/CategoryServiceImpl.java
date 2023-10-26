@@ -1,5 +1,8 @@
 package com.example.product.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -16,6 +19,7 @@ import com.example.product.service.CategoryService;
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryEntity> page = this.page(
@@ -26,4 +30,31 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return new PageUtils(page);
     }
 
+    @Override
+    public List<CategoryEntity> listWithTree() {
+        List<CategoryEntity> all = baseMapper.selectList(null);
+        List<CategoryEntity> levelManners = all.stream().filter(categoryEntity ->
+                        categoryEntity.getParentCid() == 0)
+                .map(menu -> {
+                    menu.setChildren(getChildrens(menu,all));
+                    return menu;
+                }).sorted((menu1,menu2)->{
+                    return (menu1.getSort()==null?0:menu1.getSort())-(menu2.getSort()==null?0:menu2.getSort());
+                })
+                .collect(Collectors.toList());
+
+        return levelManners;
+    }
+
+    private List<CategoryEntity> getChildrens(CategoryEntity root, List<CategoryEntity> all) {
+        List<CategoryEntity> children = all.stream().filter(categoryEntity ->
+                        categoryEntity.getParentCid() == root.getCatId())
+                .map(menu -> {
+                    menu.setChildren(getChildrens(menu, all));
+                    return menu;
+                }).sorted((menu1,menu2)->{
+                    return (menu1.getSort()==null?0:menu1.getSort())-(menu2.getSort()==null?0:menu2.getSort());
+                }).collect(Collectors.toList());
+        return children;
+    }
 }

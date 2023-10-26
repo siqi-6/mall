@@ -1,5 +1,6 @@
 package com.example.product.controller;
 
+import com.example.product.service.CategoryService;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -28,17 +29,17 @@ import com.example.common.utils.R;
 @RestController
 @RequestMapping("product/categorybrandrelation")
 public class CategoryBrandRelationController {
+
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
 
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @RequestMapping("/list/tree")
     //@RequiresPermissions("product:categorybrandrelation:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = categoryBrandRelationService.queryPage(params);
-
         return R.ok().put("page", page);
     }
 
